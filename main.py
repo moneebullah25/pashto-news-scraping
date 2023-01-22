@@ -6,6 +6,7 @@ import os
 import tkinter as tk
 from tkinter import messagebox
 from concurrent.futures import ThreadPoolExecutor
+from tkinter import ttk
 
 
 def process_txt_files():
@@ -90,6 +91,11 @@ def download_page(URL, page):
     pashto = extract_pashto_from_links(links)
     save_to_file(pashto, filename)
 
+    # Updating the description
+    description_text.config(state='normal')
+    description_text.insert('end', filename + " is downloaded\n")
+    description_text.config(state='disabled')
+
 
 def start_download():
     # Get the user's input from the Entry widgets
@@ -113,9 +119,11 @@ def start_download():
     start = int(start_page)
     end = int(end_page)
     tcount = int(thread_count)
+    progress_bar.start()
     with ThreadPoolExecutor(max_workers=tcount) as executor:
       for i in range(start, end):
           executor.submit(download_page, url, i)
+    progress_bar.stop()
 
 
 # Create the main window
@@ -154,6 +162,16 @@ download_button.grid(row=4, column=0, padx=10, pady=10)
 # Create the process files button
 process_button = tk.Button(root, text="Process Files", command=process_txt_files)
 process_button.grid(row=4, column=1, padx=10, pady=10)
+
+# Create the progress bar
+progress_bar = ttk.Progressbar(root, mode="indeterminate", maximum=100, value=0)
+progress_bar.grid(row=5, column=0, padx=10, pady=10, columnspan=2)
+
+# Create the Text widget for the description
+description_label = tk.Label(root, text="Downloaded Files:")
+description_label.grid(row=6, column=0, padx=10, pady=10, sticky="W")
+description_text = tk.Text(root, height=5, width=50, state='disabled')
+description_text.grid(row=6, column=1, padx=10, pady=10)
 
 root.mainloop()
 
