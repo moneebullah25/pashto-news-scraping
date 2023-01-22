@@ -7,6 +7,7 @@ import tkinter as tk
 from tkinter import messagebox
 from concurrent.futures import ThreadPoolExecutor
 from tkinter import ttk
+import threading
 
 
 def process_txt_files():
@@ -98,6 +99,11 @@ def download_page(URL, page):
 
 
 def start_download():
+    threading.Thread(target=_start_download, args=()).start()
+
+
+def _start_download():
+    # download code here
     # Get the user's input from the Entry widgets
     url = url_entry.get()
     start_page = start_page_entry.get()
